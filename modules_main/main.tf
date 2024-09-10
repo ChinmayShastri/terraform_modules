@@ -1,7 +1,16 @@
 provider "aws" {
   region     = var.region
 }
+data "aws_vpc" "default" {
+  default = true
+}
 
+data "aws_subnets" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
 resource "aws_launch_template" "lt" {
     name_prefix   = "${var.cluster_name}-lt"
     image_id      = var.ami
