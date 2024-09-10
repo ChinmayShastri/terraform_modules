@@ -51,39 +51,53 @@ resource "aws_autoscaling_group" "asg" {
 
 }
 
-# Create a CloudWatch alarm for CPU Utilization above 60%
-resource "aws_cloudwatch_metric_alarm" "cpu_alarm_high" {
-  alarm_name                = "${var.cluster_name}-high-cpu"
-  comparison_operator       = "GreaterThanThreshold"
-  evaluation_periods        = 2
-  metric_name               = "CPUUtilization"
-  namespace                 = "AWS/EC2"
-  period                    = 300
-  statistic                 = "Average"
-  threshold                 = 60
-  alarm_actions             = [aws_autoscaling_policy.scaling_policy.arn]
-  dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.asg.name
-  }
-}
-
-# Autoscaling Step Scaling Policy (for scaling out/in based on CPU)
 resource "aws_autoscaling_policy" "scaling-policy" {
-  name                    = "${var.cluster_name}-cpu_policy-out"
-  policy_type             = "StepScaling"
-  autoscaling_group_name  = aws_autoscaling_group.asg.name
-  adjustment_type         = "ChangeInCapacity"
+  name                   = "cpu-utilization-target-tracking"
+  policy_type            = "TargetTrackingScaling"
+  autoscaling_group_name = aws_autoscaling_group.asg.name
 
-  step_adjustment {
-    scaling_adjustment          = 1  # Scale out by 1 instance
-    metric_interval_lower_bound = 60  # When CPU goes above 60%
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+
+    target_value = 60.0
   }
-
-  step_adjustment {
-    scaling_adjustment          = -1  # Scale in by 1 instance
-    metric_interval_upper_bound = 60  # When CPU goes below 60%
-  }
-
-  cooldown = 30
 }
+
+# # Create a CloudWatch alarm for CPU Utilization above 60%
+# resource "aws_cloudwatch_metric_alarm" "cpu_alarm_high" {
+#   alarm_name                = "${var.cluster_name}-high-cpu"
+#   comparison_operator       = "GreaterThanThreshold"
+#   evaluation_periods        = 2
+#   metric_name               = "CPUUtilization"
+#   namespace                 = "AWS/EC2"
+#   period                    = 300
+#   statistic                 = "Average"
+#   threshold                 = 60
+#   alarm_actions             = [aws_autoscaling_policy.scaling_policy.arn]
+#   dimensions = {
+#     AutoScalingGroupName = aws_autoscaling_group.asg.name
+#   }
+# }
+
+# # Autoscaling Step Scaling Policy (for scaling out/in based on CPU)
+# resource "aws_autoscaling_policy" "scaling-policy" {
+#   name                    = "${var.cluster_name}-cpu_policy-out"
+#   policy_type             = "StepScaling"
+#   autoscaling_group_name  = aws_autoscaling_group.asg.name
+#   adjustment_type         = "ChangeInCapacity"
+
+#   step_adjustment {
+#     scaling_adjustment          = 1  # Scale out by 1 instance
+#     metric_interval_lower_bound = 60  # When CPU goes above 60%
+#   }
+
+#   step_adjustment {
+#     scaling_adjustment          = -1  # Scale in by 1 instance
+#     metric_interval_upper_bound = 60  # When CPU goes below 60%
+#   }
+
+#   cooldown = 30
+# }
 
