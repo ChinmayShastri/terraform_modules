@@ -9,7 +9,7 @@ resource "aws_launch_template" "lt" {
     key_name      = aws_key_pair.key.key_name
 
     tag_specifications {
-      resource_type = instance
+      resource_type = "instance"
       tags = {
         Name = "${var.cluster_name}-instance"
       }
