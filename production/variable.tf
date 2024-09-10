@@ -1,4 +1,14 @@
-#staging variables
+#production variables
+variable "cluster_name" {
+    description = "define cluster name"
+    type = string
+    default = "production"
+}
+variable "instance_type" {
+    description = "define instance type"
+    type = string
+    default = "t2.micro"
+}
 variable "ami" {
     description = "define ami id"
     type = string
