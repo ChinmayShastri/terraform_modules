@@ -1,3 +1,7 @@
+provider "aws" {
+  region     = var.region
+}
+
 module "stagin_group" {
     source = "../modules_main"
     region = var.region

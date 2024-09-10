@@ -2,7 +2,7 @@
 variable "ami" {
     description = "define ami id"
     type = string
-    default = "ami.12345"
+    default = "ami-0a5c3558529277641"
 }
 variable "region" {
     description = "define the cluster region"
