@@ -4,7 +4,7 @@ provider "aws" {
 
 resource "aws_launch_template" "lt" {
     name_prefix   = "${var.cluster_name}-lt"
-    image_id      = lookup(var.ami, var.region)
+    image_id      = var.ami
     instance_type = var.instance_type
     key_name      = aws_key_pair.key.key_name
 
