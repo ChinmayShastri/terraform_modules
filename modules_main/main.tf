@@ -30,7 +30,7 @@ resource "aws_key_pair" "key" {
 }
 
 resource "aws_autoscaling_group" "asg" {
-    name_prefix               = "${var.cluster_name}-asg"
+    name              = "${var.cluster_name}-asg"
     vpc_zone_identifier       = data.aws_subnets.default.ids
     min_size                  = var.min_size
     max_size                  = var.max_size
